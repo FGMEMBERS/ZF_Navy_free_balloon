@@ -3,7 +3,7 @@
 //
 //  Copyright (C) 2009 - 2011  Tim Moore         (timoore(at)redhat.com)
 //  Copyright (C) 2011 - 2012  Thorsten Renk
-//  Copyright (C) 2012  Anders Gidenstam  (anders(at)gidenstam.org)
+//  Copyright (C) 2012 - 2015  Anders Gidenstam  (anders(at)gidenstam.org)
 //  This file is licensed under the GPL license version 2 or later.
 
 // Shader that uses OpenGL state values to do per-pixel lighting
@@ -94,16 +94,16 @@ void main()
         float nz  = r - (h + pow(1.0 - lxy/r, 5.0)*(2.5*r - h));
         float dlxy = -5.0*(2.5*r - h)/r * pow(1.0 - lxy/r, 4.0); // Derivative map lxy
 
-        oNormal.z = sqrt(1.0 - pow(oNormal.x,2.0) - pow(oNormal.y,2.0))/dlxy;
+        oNormal.z = sqrt(1.0 - dot(oNormal.xy,oNormal.xy))/dlxy;
         oNormal = normalize(oNormal);
         
         oPosition.z = min(r - h, max(nz, oPosition.z));
         pressureDelta = sqrt(-0.5*(h + oPosition.z - r)/r);
     }
-    angle = asin(oNormal.y);
 
     // The balloon envelope is assumed to be symetric around the z axis.
     vec2 tmp = normalize(oPosition.xy);
+    angle = asin(tmp.y);
     vec3 oTangent = vec3(-tmp.y, tmp.x, 0);
     tangent = gl_NormalMatrix * oTangent;
     
